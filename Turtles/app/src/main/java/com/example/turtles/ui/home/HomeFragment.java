@@ -26,6 +26,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -53,6 +54,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -90,6 +92,7 @@ public class HomeFragment extends Fragment {
     String imageFileName;
 
     String currentTurtle;
+    ArrayList<Turtle> list;
     private static final int ACTION_REQUEST_CAMERA = 100;
     private static final int ACTION_REQUEST_CAMERA_EDIT = 101;
     private ImageView editImage;
@@ -121,7 +124,7 @@ public class HomeFragment extends Fragment {
         final Button add =binding.add;
         final ImageButton filter=binding.filter;
 
-        final ListView listView=binding.listView;
+        final RecyclerView recyclerView=binding.recyclerView;
         final Activity activity = requireActivity();
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,18 +133,23 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        ArrayList<Turtle> list=new ArrayList<>();
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(activity); // Esempio con LinearLayoutManager
+
+        // Imposta il LayoutManager sulla RecyclerView
+        recyclerView.setLayoutManager(layoutManager);
+
+
+        list=new ArrayList<>();
         TurtleAdapter adapter = new TurtleAdapter(activity, list);
+        recyclerView.setAdapter(adapter);
         //TurtleAdapter adapter=new TurtleAdapter<Turtle>(this,R.layout.list_item,list);
-        listView.setAdapter(adapter);
 
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        adapter.setOnItemClickListener(new TurtleAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(int position) {
                 Turtle selectedItem = list.get(position);
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
                 View dialogView = getLayoutInflater().inflate(R.layout.dialog_image_layout, null);
                 builder.setView(dialogView);
                 ImageView dialogImageView = dialogView.findViewById(R.id.dialogImageView);
@@ -556,13 +564,12 @@ public class HomeFragment extends Fragment {
                     }
                 });
 
-
                 AlertDialog dialog = builder.create();
                 dialog.show();
-
-
             }
         });
+
+
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -599,13 +606,13 @@ public class HomeFragment extends Fragment {
         ageSpinner = dialogView.findViewById(R.id.ageSpinner);
 
 
-        List<String> list = new ArrayList<String>();
-        list.add("Maschio");
-        list.add("Femmina");
-        list.add("Select one");
-        final int listsize = list.size() - 1;
+        List<String> list1 = new ArrayList<String>();
+        list1.add("Maschio");
+        list1.add("Femmina");
+        list1.add("Select one");
+        final int listsize = list1.size() - 1;
 
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item, list) {
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item, list1) {
             @Override
             public int getCount() {
                 return(listsize); // Truncate the list
@@ -709,7 +716,23 @@ public class HomeFragment extends Fragment {
         btnInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //String code = editTextCode.getText().toString().trim();
+                String code = editTextCode.getText().toString().trim();
+                boolean isCodePresent = false;
+                for (Turtle turtle : list) {
+                    if(!code.isEmpty()){
+                        if (turtle.getCodiceMicrochip() == Integer.parseInt(code)) {
+                            isCodePresent = true;
+                            break;
+                        }
+                    }
+
+                }
+
+                if (isCodePresent) {
+                    Toast.makeText(activity, "Tartaruga già presente con questo codice", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
 
                 if (selectedCampo.isEmpty() || selectedCampo=="Select one") {
                     // Gestisci il caso in cui i campi siano vuoti
