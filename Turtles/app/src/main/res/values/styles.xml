@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MyTextStyle">
+        <item name="android:textSize">16sp</item> <!-- Imposta la dimensione del testo a 16sp -->
+        <item name="android:textColor">#808080</item> <!-- Imposta il colore del testo -->
+        <!-- Aggiungi altri attributi desiderati dello stile -->
+    </style>
+
+</resources>
