@@ -160,6 +160,8 @@ public class HomeFragment extends Fragment {
                 TextView dialogTextViewEta = dialogView.findViewById(R.id.dialogTextViewEta);
                 TextView dialogTextViewDate = dialogView.findViewById(R.id.dialogTextViewDateRegistration);
                 ProgressBar loadingProgressBar = dialogView.findViewById(R.id.loadingProgressBar);
+                loadingProgressBar.setVisibility(View.VISIBLE);
+                dialogImageView.setVisibility(View.GONE);
 
                 // Creare e mostrare il DialogView
                 builder.setTitle("Dettagli");
@@ -195,8 +197,6 @@ public class HomeFragment extends Fragment {
                     StorageReference mImageStorage = FirebaseStorage.getInstance().getReference();
                     StorageReference ref = mImageStorage.child(selectedItem.getUri());
 
-                    loadingProgressBar.setVisibility(View.VISIBLE);
-                    dialogImageView.setVisibility(View.GONE);
                     ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                         @Override
                         public void onComplete(@NonNull Task<Uri> task) {
@@ -286,12 +286,15 @@ public class HomeFragment extends Fragment {
                         Spinner editGender = editDialogView.findViewById(R.id.genderSpinner);
                         EditText editCode = editDialogView.findViewById(R.id.editCode);
 
+                        editProgressBar.setVisibility(View.VISIBLE);
+                        deleteImg.setVisibility(View.GONE);
+                        editImage.setVisibility(View.GONE);
+
                         List<String> list = new ArrayList<String>();
                         list.add("Maschio");
                         list.add("Femmina");
                         list.add("Select one");
                         final int listsize = list.size() - 1;
-
                         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item, list) {
                             @Override
                             public int getCount() {
@@ -301,7 +304,14 @@ public class HomeFragment extends Fragment {
 
                         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         editGender.setAdapter(dataAdapter);
-                        editGender.setSelection(listsize); // Hidden item to appear in the spinner
+                        if(selectedItem.getSesso().isEmpty()){
+                            editGender.setSelection(list.size() - 1);
+
+                        }else{
+                            int selectedIndex = list.indexOf(selectedItem.getSesso());
+                            editGender.setSelection(selectedIndex);
+
+                        }
 
                         editGender.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
@@ -332,7 +342,8 @@ public class HomeFragment extends Fragment {
 
                         dataAdapterCampo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         editCampo.setAdapter(dataAdapterCampo);
-                        editCampo.setSelection(listsize2); // Hidden item to appear in the spinner
+                        editCampo.setSelection(listsize2);
+
 
                         editCampo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
@@ -362,7 +373,12 @@ public class HomeFragment extends Fragment {
 
                         dataAdapter3.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         editAge.setAdapter(dataAdapter3);
-                        editAge.setSelection(listsize3); // Hidden item to appear in the spinner
+                        if(selectedItem.getAge().isEmpty()){
+                            editAge.setSelection(2);
+                        }else{
+                            editAge.setSelection(listsize3);
+                        }
+
 
                         editAge.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                             @Override
@@ -380,9 +396,7 @@ public class HomeFragment extends Fragment {
                             StorageReference mImageStorage = FirebaseStorage.getInstance().getReference();
                             StorageReference ref = mImageStorage.child(selectedItem.getUri());
 
-                            editProgressBar.setVisibility(View.VISIBLE);
-                            deleteImg.setVisibility(View.GONE);
-                            editImage.setVisibility(View.GONE);
+
                             ref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Uri> task) {
@@ -470,6 +484,7 @@ public class HomeFragment extends Fragment {
                             }
                         });
 
+                        /*
                         int ageIndex;
                         String ageString = selectedItem.getAge();
                         if(ageString==""){
@@ -486,7 +501,8 @@ public class HomeFragment extends Fragment {
                         }else{
                             genderIndex = getIndexFromArray(list3, ageString);
                         }
-                        editGender.setSelection(genderIndex);
+                        editGender.setSelection(genderIndex-1);
+                        */
 
                         int campoString = selectedItem.getCampo();
                         int campoIndex = getIndexFromArray(list2, String.valueOf(campoString));

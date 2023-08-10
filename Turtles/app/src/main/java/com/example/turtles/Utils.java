@@ -85,15 +85,18 @@ public class Utils {
         textPaint.setTextSize(500); // Dimensione del testo in pixel
         textPaint.setTypeface(Typeface.DEFAULT_BOLD); // Stile del testo (in questo caso grassetto)
 
+        //area 3
         // Disegna i testi sui rispettivi posti
         float x1 = width * 0.24f; // 10% della larghezza
         float y1 = height * 0.63f; // 10% dell'altezza
         canvas.drawText(text1, x1, y1, textPaint);
 
-        float x2 = width * 0.68f; // 10% della larghezza
+        //area 2
+        float x2 = width * 0.67f; // 10% della larghezza
         float y2 = height * 0.26f; // 50% dell'altezza
         canvas.drawText(text2, x2, y2, textPaint);
 
+        //area 1
         float x3 = width * 0.60f; // 10% della larghezza
         float y3 = height * 0.65f; // 90% dell'altezza
         canvas.drawText(text3, x3, y3, textPaint);
